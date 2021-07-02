@@ -1,7 +1,9 @@
 include(ExternalProject)
 
 set(base "${CMAKE_BINARY_DIR}/CMakeExternals")
+# set external project base dir 
 set_property(DIRECTORY PROPERTY EP_BASE ${base})
+
 
 
 # This macro sets CMAKE_BUILD_TYPE if it is undefined

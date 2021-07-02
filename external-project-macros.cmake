@@ -1,4 +1,5 @@
 
+
 #
 # force build macro
 #
@@ -19,6 +20,18 @@ endmacro()
 macro(get_try_run_results_file tag)
   string(REPLACE "-" "_" tag_with_underscore ${tag})
   set(try_run_results_file ${try_run_results_${tag_with_underscore}})
+endmacro()
+
+# fetch lz 4
+macro(fetch_lz4)
+  ExternalProject_Add(
+    fetch_lz4
+    SOURCE_DIR ${source_prefix}/lz4
+    URL https://github.com/lz4/lz4/archive/refs/tags/v1.9.3.tar.gz
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ""
+  )
 endmacro()
 
 #
