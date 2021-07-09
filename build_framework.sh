@@ -7,6 +7,7 @@ export CC="clang"
 export CXX="clang++"
 export CXXFLAGS="-stdlib=libc++"
 
-cmake -DBUILD_ANDROID:BOOL="OFF" -DBUILD_IOS_DEVICE="ON" -DBUILD_IOS_SIMULATOR="OFF"  ../
+#cmake clean cache
+cmake -DBUILD_ANDROID:BOOL="OFF" -DBUILD_IOS_DEVICE="ON" -DBUILD_IOS_SIMULATOR="OFF" -DCMAKE_TOOLCHAIN_FILE=/Volumes/mac-data/Developer_Slow/cpp/vcpkg/scripts/buildsystems/vcpkg.cmake  ../
 
-make -j`sysctl -n hw.ncpu`
+make -j16 VERBOSE=1 

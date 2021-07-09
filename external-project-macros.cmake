@@ -22,7 +22,7 @@ macro(get_try_run_results_file tag)
   set(try_run_results_file ${try_run_results_${tag_with_underscore}})
 endmacro()
 
-# fetch lz 4
+# fetch lz4
 macro(fetch_lz4)
   ExternalProject_Add(
     fetch_lz4
@@ -34,87 +34,40 @@ macro(fetch_lz4)
   )
 endmacro()
 
+macro(crosscompile_lz4 tag)
+  set(proj lz4-${tag})
+  get_toolchain_file(${tag})
+  ExternalProject_Add(
+    ${proj}
+    SOURCE_DIR ${source_prefix}/lz4
+    DOWNLOAD_COMMAND ""
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND "make "
+    INSTALL_COMMAND ""
+  )
+
+  force_build(${proj})
+endmacro()
+
 #
 # Eigen fetch and install
 #
 macro(install_eigen)
-  #set(eigen_url http://www.vtk.org/files/support/eigen-3.1.0-alpha1.tar.gz)
-  #set(eigen_md5 c04dedf4ae97b055b6dd2aaa01daf5e9)
+  set(eigen_url http://www.vtk.org/files/support/eigen-3.1.0-alpha1.tar.gz)
+  set(eigen_md5 c04dedf4ae97b055b6dd2aaa01daf5e9)
   ExternalProject_Add(
     eigen
     SOURCE_DIR ${source_prefix}/eigen
-    GIT_REPOSITORY git://github.com/RLovelett/eigen.git
-    GIT_TAG 917060c364181f33a735dc023818d5a54f60e54c
-    # URL ${eigen_url}
-    # URL_MD5 ${eigen_md5}
+    # GIT_REPOSITORY git://github.com/RLovelett/eigen.git
+    # GIT_TAG 917060c364181f33a735dc023818d5a54f60e54c
+    URL ${eigen_url}
+    URL_MD5 ${eigen_md5}
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory "${source_prefix}/eigen/Eigen" "${install_prefix}/eigen/Eigen" && ${CMAKE_COMMAND} -E copy_directory "${source_prefix}/eigen/unsupported" "${install_prefix}/eigen/unsupported"
   )
 endmacro()
 
-#
-# VTK fetch
-#
-macro(fetch_vtk)
-  ExternalProject_Add(
-    vtk-fetch
-    SOURCE_DIR ${source_prefix}/vtk
-    GIT_REPOSITORY git://github.com/Kitware/VTK.git
-#    GIT_TAG ce4a267
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND ""
-    INSTALL_COMMAND ""
-  )
-endmacro()
-
-#
-# VTK compile tools for host OS (aka your MAC)
-#
-macro(compile_vtk)
-  set(proj vtk-host)
-  ExternalProject_Add(
-    ${proj}
-    SOURCE_DIR ${source_prefix}/vtk
-    DOWNLOAD_COMMAND ""
-    INSTALL_COMMAND ""
-    DEPENDS vtk-fetch
-    CMAKE_ARGS
-      -DCMAKE_INSTALL_PREFIX:PATH=${install_prefix}/${proj}
-      -DCMAKE_BUILD_TYPE:STRING=${build_type}
-      -DBUILD_SHARED_LIBS:BOOL=ON
-      -DBUILD_TESTING:BOOL=OFF
-      ${vtk_module_defaults}
-  )
-endmacro()
-
-#
-# VTK crosscompile
-#
-macro(crosscompile_vtk tag)
-  set(proj vtk-${tag})
-  get_toolchain_file(${tag})
-  get_try_run_results_file(${proj})
-  ExternalProject_Add(
-    ${proj}
-    SOURCE_DIR ${source_prefix}/vtk
-    DOWNLOAD_COMMAND ""
-    INSTALL_COMMAND ""
-    DEPENDS vtk-host
-    CMAKE_ARGS
-      -DVTK_IOS_BUILD:BOOL=ON
-      -DCMAKE_INSTALL_PREFIX:PATH=${install_prefix}/${proj}
-      -DCMAKE_BUILD_TYPE:STRING=${build_type}
-      -DBUILD_SHARED_LIBS:BOOL=OFF
-      -DBUILD_TESTING:BOOL=OFF
-      -DCMAKE_TOOLCHAIN_FILE:FILEPATH=${toolchain_file}
-      -DVTKCompileTools_DIR:PATH=${build_prefix}/vtk-host
-      ${vtk_module_defaults}
-      -C ${try_run_results_file}
-  )
-
-  force_build(${proj})
-endmacro()
 
 #
 # FLANN fetch
@@ -146,10 +99,11 @@ macro(crosscompile_flann tag)
       -DCMAKE_INSTALL_PREFIX:PATH=${install_prefix}/${proj}
       -DCMAKE_BUILD_TYPE:STRING=${build_type}
       -DCMAKE_TOOLCHAIN_FILE:FILEPATH=${toolchain_file}
-     # -DBUILD_SHARED_LIBS:BOOL=OFF
+      -DBUILD_SHARED_LIBS:BOOL=OFF
       -DBUILD_EXAMPLES:BOOL=OFF
       -DBUILD_PYTHON_BINDINGS:BOOL=OFF
       -DBUILD_MATLAB_BINDINGS:BOOL=OFF
+
   )
 
   force_build(${proj})
@@ -232,7 +186,7 @@ macro(crosscompile_pcl tag)
     ${proj}
     SOURCE_DIR ${source_prefix}/pcl
     DOWNLOAD_COMMAND ""
-    DEPENDS pcl-fetch boost-${tag} flann-${tag} vtk-${tag} eigen
+    DEPENDS pcl-fetch boost-${tag} eigen
     CMAKE_ARGS
       -DCMAKE_INSTALL_PREFIX:PATH=${install_prefix}/${proj}
       -DCMAKE_BUILD_TYPE:STRING=${build_type}
@@ -245,7 +199,7 @@ macro(crosscompile_pcl tag)
       -DFLANN_INCLUDE_DIR=${install_prefix}/flann-${tag}/include
       -DFLANN_LIBRARY=${install_prefix}/flann-${tag}/lib/libflann_cpp_s.a
       -DBOOST_ROOT=${install_prefix}/boost-${tag}
-      -DVTK_DIR=${build_prefix}/vtk-${tag}/CMakeExternals/Build/vtk-ios-device-armv7
+      # -DVTK_DIR=${build_prefix}/vtk-${tag}/CMakeExternals/Build/vtk-ios-device-armv7
       -DWITH_PCAP:BOOL=OFF
       -DPCL_ENABLE_SSE=OFF
       -C ${try_run_results_file}

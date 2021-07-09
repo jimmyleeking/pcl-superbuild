@@ -12,7 +12,8 @@ find_program(CMAKE_CXX_COMPILER NAME g++
   /Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/
   NO_DEFAULT_PATH)
 
-set(CMAKE_OSX_ARCHITECTURES "armv7;armv7s;arm64;")
+message(STATUS "$CMAKE_CXX_COMPILER")
+set(CMAKE_OSX_ARCHITECTURES "arm64")
 #set(CMAKE_OSX_ARCHITECTURES "armv7")
 
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fmessage-length=0 -pipe")
@@ -35,7 +36,7 @@ set(possible_sdk_roots
   /Developer/Platforms/iPhoneOS.platform/Developer/SDKs
   )
 foreach(sdk_root ${possible_sdk_roots})
-  foreach(sdk iPhoneOS4.3.sdk iPhoneOS5.0.sdk iPhoneOS5.1.sdk iPhoneOS6.0.sdk iPhoneOS6.1.sdk iPhoneOS7.0sdk iPhoneOS7.1sdk iPhoneOS9.2.sdk iPhoneOS11.2.sdk)
+  foreach(sdk iPhoneOS4.3.sdk iPhoneOS5.0.sdk iPhoneOS5.1.sdk iPhoneOS6.0.sdk iPhoneOS6.1.sdk iPhoneOS7.0sdk iPhoneOS7.1sdk iPhoneOS9.2.sdk iPhoneOS11.2.sdk iPhoneOS.sdk)
     if (EXISTS ${sdk_root}/${sdk} AND IS_DIRECTORY ${sdk_root}/${sdk})
       set(CMAKE_OSX_SYSROOT ${sdk_root}/${sdk})
     endif()

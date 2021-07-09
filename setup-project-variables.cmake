@@ -73,6 +73,8 @@ option(BUILD_IOS_DEVICE "Build for iOS device" ON)
 option(BUILD_IOS_SIMULATOR "Build for iOS simulator" OFF)
 
 
+include_directories(${CMAKE_BUILD_DIR}/CMakeExternals/install/lz4)
+
 set(toolchain_dir ${CMAKE_SOURCE_DIR}/toolchains)
 set(toolchain_ios_simulator ${toolchain_dir}/toolchain-ios-simulator.cmake)
 set(toolchain_ios_device ${toolchain_dir}/toolchain-ios-device.cmake)
